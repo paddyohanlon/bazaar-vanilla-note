@@ -1,0 +1,383 @@
+:root {
+  /* colors */
+  --primary: #19b33d;
+  --primary-hover: #11852c;
+  --black: #000;
+  --white: #fff;
+  --dark-gray: #1a1a1a;
+  --gray: #262626;
+  --light-gray: #a6a6a6;
+  --input-bg-gray: #3a3b3c;
+  --card-bg-gray: #242526;
+
+  /* other */
+  --font-size-small: 0.8em;
+  --border-radius: 0.25em;
+  --space: 1em;
+  --transition: all 0.15s ease-in-out;
+
+  /* loading indicator */
+  --indicator-size: 4em;
+  --ring-size: 4px;
+  --ring-color: #fff;
+  --ring-spinning-segment-color: var(--light-gray);
+
+  /* hamburger icon */
+  --hamburger-size: 52px;
+  --hamburger-bar-height: 4px;
+  --hamburger-bar-width: 24px;
+  --hamburger-bar-left: calc(50% - var(--hamburger-bar-width) / 2);
+  --hamburger-bar-vertically-align: calc(50% - var(--hamburger-bar-height) / 2);
+  --hamburger-bar-space: 2;
+  --hamburger-bar-top-1: calc(
+    var(--hamburger-bar-vertically-align) - var(--hamburger-bar-height) *
+      var(--hamburger-bar-space)
+  );
+  --hamburger-bar-top-2: var(--hamburger-bar-vertically-align);
+  --hamburger-bar-top-3: calc(
+    var(--hamburger-bar-vertically-align) + var(--hamburger-bar-height) *
+      var(--hamburger-bar-space)
+  );
+  --hamburger-bar-y-translate: calc(var(--hamburger-bar-height) * 2);
+}
+
+/* apply a natural box layout model to all elements, but allowing components to change */
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+html {
+  color: var(--white);
+  font-size: 1em;
+  line-height: 1.4;
+}
+
+body {
+  background-color: var(--dark-gray);
+  font-family: sans-serif;
+  padding-bottom: calc(var(--space) * 6);
+}
+
+h1 {
+  color: var(--white);
+}
+
+.loading .site-header,
+.loading .site-nav,
+.loading .main,
+.loading {
+  display: none;
+}
+
+.logged-out .logged-in-nav,
+.logged-out .dashboard,
+.logged-out #notes {
+  display: none;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5em;
+}
+
+.nav-list {
+  display: flex;
+}
+.nav-list li {
+  margin-right: 0.5em;
+}
+.nav-list li:last-child {
+  margin-right: 0;
+}
+
+#nav-list-dropdown {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: var(--border-radius);
+  padding: var(--space);
+  position: absolute;
+  right: 1em;
+  top: calc(var(--hamburger-size) + var(--space));
+  text-align: right;
+}
+
+#sign-out-button {
+  margin-top: var(--space);
+}
+
+.text-label {
+  color: var(--primary);
+}
+
+.logo {
+  display: block;
+  height: auto;
+  max-width: 200px;
+}
+
+.button {
+  color: var(--white);
+  cursor: pointer;
+  outline: 0;
+  background-color: var(--primary);
+  border-color: var(--primary);
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: center;
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  font-size: 1em;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  transition: var(--transition);
+}
+.button:hover {
+  color: var(--white);
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.card {
+  background-color: var(--card-bg-gray);
+  border-radius: var(--border-radius);
+  color: var(--light-gray);
+  padding: var(--space);
+}
+
+.container-small {
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 4em var(--space);
+}
+
+.get-started-title {
+  font-size: 3em;
+  margin: 0;
+}
+
+.start-action {
+  color: var(--primary);
+}
+
+#notes {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 0 var(--space);
+}
+
+.note {
+  margin-bottom: var(--space);
+  position: relative;
+}
+
+.note-text {
+  color: var(--white);
+}
+
+.delete-note-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--light-gray);
+}
+
+.delete-note-button:hover {
+  cursor: pointer;
+  color: var(--white);
+}
+
+.powered-by {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: var(--border-radius) 0 0 0;
+  font-size: var(--font-size-small);
+  padding: calc(var(--space) / 2) var(--space);
+  position: fixed;
+  right: 0;
+  bottom: 0;
+}
+.powered-by a,
+.powered-by a:link {
+  color: var(--primary);
+  transition: var(--transition);
+}
+.powered-by a:hover,
+.powered-by a:focus {
+  color: var(--primary-hover);
+}
+
+.input,
+.textarea {
+  background-color: var(--input-bg-gray);
+  border-color: transparent;
+  border-radius: var(--border-radius);
+  color: var(--white);
+  max-width: 100%;
+  width: 100%;
+}
+
+.textarea {
+  display: block;
+  max-width: 100%;
+  min-width: 100%;
+  padding: calc(0.75em - 1px);
+  resize: vertical;
+}
+
+#note-textarea {
+  margin-bottom: calc(var(--space) / 2);
+  min-height: 100px;
+}
+
+/*
+ * Loading indicator
+ */
+#loader,
+#loader:after {
+  border-radius: 50%;
+  width: var(--indicator-size);
+  height: var(--indicator-size);
+  transform: translateZ(0);
+}
+
+#loader {
+  margin: 60px auto;
+  font-size: 10px;
+  position: relative;
+  text-indent: -9999em;
+  border-top: var(--ring-size) solid var(--ring-color);
+  border-right: var(--ring-size) solid var(--ring-color);
+  border-bottom: var(--ring-size) solid var(--ring-color);
+  border-left: var(--ring-size) solid var(--ring-spinning-segment-color);
+  animation: loader 0.8s infinite linear;
+}
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/*
+ * Hamburger icon for toggling menu
+ */
+#navbar-burger {
+  color: var(--white);
+  cursor: pointer;
+  display: block;
+  height: var(--hamburger-size);
+  width: var(--hamburger-size);
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: var(--transition);
+  border-radius: 0 0 0 var(--border-radius);
+}
+#navbar-burger span {
+  background-color: currentColor;
+  display: block;
+  height: var(--hamburger-bar-height);
+  left: var(--hamburger-bar-left);
+  position: absolute;
+  transform-origin: center;
+  transition-duration: 86ms;
+  transition-property: background-color, opacity, transform;
+  transition-timing-function: ease-out;
+  width: var(--hamburger-bar-width);
+}
+#navbar-burger span:nth-child(1) {
+  top: var(--hamburger-bar-top-1);
+}
+#navbar-burger span:nth-child(2) {
+  top: var(--hamburger-bar-top-2);
+}
+#navbar-burger span:nth-child(3) {
+  top: var(--hamburger-bar-top-3);
+}
+#navbar-burger:hover {
+  background-color: var(--primary-hover);
+}
+#navbar-burger.is-active span:nth-child(1) {
+  transform: translateY(var(--hamburger-bar-y-translate)) rotate(45deg);
+}
+#navbar-burger.is-active span:nth-child(2) {
+  opacity: 0;
+}
+#navbar-burger.is-active span:nth-child(3) {
+  transform: translateY(calc(-1 * var(--hamburger-bar-y-translate)))
+    rotate(-45deg);
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+/**
+ * list reset
+ */
+.list-reset {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * Hide visually and from screen readers
+ */
+
+.hidden {
+  display: none !important;
+}
+
+/*
+ * Hide only visually, but have it available for screen readers:
+ * https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+ *
+ * 1. For long content, line feeds are not interpreted as spaces and small width
+ *    causes content to wrap 1 word per line:
+ *    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
+ */
+
+.visually-hidden {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+  /* 1 */
+}
+
+/*
+ * Extends the .visually-hidden class to allow the element
+ * to be focusable when navigated to via the keyboard:
+ * https://www.drupal.org/node/897638
+ */
+
+.visually-hidden.focusable:active,
+.visually-hidden.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  white-space: inherit;
+  width: auto;
+}

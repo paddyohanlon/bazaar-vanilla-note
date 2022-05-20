@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vanilla Note</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="loading logged-out">
+    <div id="loader">Loading&hellip;</div>
+
+    <header class="site-header">
+      <a href="/">
+        <img
+          class="logo"
+          src="./img/logo.png"
+          alt="Vanilla Note logo"
+          width="400"
+          height="64"
+        />
+      </a>
+      <nav class="site-nav">
+        <ul id="logged-out-nav-list" class="nav-list list-reset">
+          <li>
+            <a href="" id="authorize-link" class="button"
+              >Sign in or create account</a
+            >
+          </li>
+        </ul>
+        <ul class="nav-list logged-in-nav list-reset">
+          <li>
+            <!-- toggle nav -->
+            <a
+              role="button"
+              id="navbar-burger"
+              aria-label="Open or close menu"
+              aria-expanded="false"
+            >
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+            </a>
+            <ul id="nav-list-dropdown" class="list-reset visually-hidden">
+              <li>
+                <span class="text-label">User ID</span>
+                <span id="user-id"></span>
+              </li>
+              <li>
+                <span class="text-label">Email</span> <span id="email"></span>
+              </li>
+              <li>
+                <button id="sign-out-button" class="button">Sign out</button>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="main">
+      <div id="get-started" class="container-small">
+        <h1 class="get-started-title">
+          Start <span class="start-action">taking notes</span>
+        </h1>
+        <p>
+          Take simple notes. Keep a journal. Write a private micro-blog.<br />
+          Create an account or sign in to get started.
+        </p>
+      </div>
+
+      <div class="dashboard container-small">
+        <div class="card">
+          <form id="note-form" action="">
+            <textarea
+              id="note-textarea"
+              class="textarea"
+              name="note"
+              placeholder="Write a note..."
+            ></textarea>
+            <button type="submit" id="create-note-button" class="button">
+              Create note
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div id="notes"></div>
+
+      <div class="powered-by">
+        Powered by <a href="https://id.rethinkdb.cloud/">RethinkID</a>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/gh/mostlytyped/rethinkid-js-sdk-dist/rethinkid-js-sdk.iife.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
