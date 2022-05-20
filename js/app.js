@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
    * The SDK is imported via a script tag in index.html
    */
   const rid = new RethinkID({
-    appId: "949f6f3f-864f-44ab-b2ef-f8b3e9c79b57",
+    appId: "ec0887ca-a970-43af-bc75-0aa0164d97e3",
     logInRedirectUri: baseUrl,
     dataAPIConnectErrorCallback: function () {
       this.logOut();
