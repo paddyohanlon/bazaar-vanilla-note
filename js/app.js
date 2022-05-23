@@ -1,29 +1,14 @@
+/**
+ * A note
+ * @typedef {Object} Note
+ * @property {string} note.id
+ * @property {string} note.date An ISO formatted date string
+ * @property {string} note.text The text content of the note
+ */
+
 document.addEventListener("DOMContentLoaded", async () => {
   const baseUrl = window.location.origin;
   const body = document.body;
-
-  const insertNoteInDOM = (noteElement, noteData) => {
-    const dateObj = new Date(noteData.time);
-
-    const dateFormatted = dateObj.toLocaleDateString("en-US", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-    });
-
-    noteElement.insertAdjacentHTML(
-      "afterbegin",
-      `
-      <div class="note card">
-        <div class="note-date">${dateFormatted}</div>
-        <div class="note-text">${noteData.text}</div>
-        <button class="delete-note-button" data-note-id="${noteData.id}" aria-label="Delete note">&times;</button>
-      </div>
-      `
-    );
-  };
 
   /**
    * Configure the RethinkID SDK
@@ -38,6 +23,61 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   const loggedIn = rid.isLoggedIn();
+
+  const NOTES_TABLE_NAME = "notes";
+  const notesTable = rid.table(NOTES_TABLE_NAME, {});
+
+  /**
+   * Add an event listener to delete a note from the database and DOM
+   * @param {string} noteId
+   */
+  const deleteNoteEventListener = (noteId) => {
+    const deleteButton = document.getElementById(noteId);
+    deleteButton.addEventListener("click", async () => {
+      if (!window.confirm("Delete note forever?")) {
+        return;
+      }
+
+      // Delete note from database
+      await notesTable.delete({
+        rowId: noteId,
+      });
+
+      // Remove note from DOM
+      const noteElement = deleteButton.closest(".note");
+      noteElement.remove();
+    });
+  };
+
+  /**
+   * Insert a note into the DOM
+   * @param {Note} note
+   */
+  const insertNoteInDOM = (note) => {
+    const notesElement = document.querySelector("#notes");
+
+    const dateObj = new Date(note.date);
+    const dateFormatted = dateObj.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    });
+
+    notesElement.insertAdjacentHTML(
+      "afterbegin",
+      `
+      <div class="note card">
+        <div class="note-date">${dateFormatted}</div>
+        <div class="note-text">${note.text}</div>
+        <button id="${note.id}" class="delete-note-button" aria-label="Delete note">&times;</button>
+      </div>
+      `
+    );
+
+    deleteNoteEventListener(note.id);
+  };
 
   /**
    * Logged in setup
@@ -77,52 +117,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       navDropdown.classList.toggle("visually-hidden");
     });
 
-    // Data API
-    const NOTES_TABLE_NAME = "notes";
-
-    const notesTable = rid.table(NOTES_TABLE_NAME, {});
-
-    const notesElement = document.querySelector("#notes");
-
-    let notesData = [];
-
     /**
      * Get notes
      */
     try {
       const response = await notesTable.read();
-      notesData = response.data;
+      const notes = response.data;
 
-      // Newest at top
-      notesData.reverse();
+      // Sort by date DESC, newest at top
+      notes.sort((a, b) => {
+        return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+      });
 
-      for (const note of notesData) {
-        insertNoteInDOM(notesElement, note);
-      }
-
-      const deleteNoteButtons = document.querySelectorAll(
-        ".delete-note-button"
-      );
-
-      /**
-       * Delete note
-       */
-      for (const button of deleteNoteButtons) {
-        // Once we've added notes to the DOM, add event listeners to delete buttons
-        button.addEventListener("click", async () => {
-          if (!window.confirm("Delete note forever?")) {
-            return;
-          }
-
-          // Delete note from database
-          await notesTable.delete({
-            rowId: button.dataset.noteId,
-          });
-
-          // Remove note from DOM
-          const noteElement = button.closest(".note");
-          noteElement.remove();
-        });
+      for (const note of notes) {
+        insertNoteInDOM(note);
       }
     } catch (error) {
       console.error("error.message", error.message);
@@ -137,19 +145,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const noteInput = document.querySelector("#note-textarea");
 
-      const note = {
-        time: new Date().toISOString(),
+      const newNote = {
+        date: new Date().toISOString(),
         text: noteInput.value,
       };
 
       try {
-        const result = await rid.tableInsert(NOTES_TABLE_NAME, note);
-        console.log("result", result);
-        // TODO need to add ID or delete won't work! RethinkID does not yet return it.
-        notesData.push(note);
-        insertNoteInDOM(notesElement, note);
+        const result = await rid.tableInsert(NOTES_TABLE_NAME, newNote);
 
-        // clear the input
+        /**
+         * @type {Note}
+         */
+        const createdNote = {
+          id: result.data,
+          ...newNote,
+        };
+
+        insertNoteInDOM(createdNote);
+
+        // Clear the input
         noteInput.value = "";
       } catch (error) {
         console.error("error.message", error.message);
