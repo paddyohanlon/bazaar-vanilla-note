@@ -70,8 +70,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       `
       <div class="note card">
         <div class="note-date">${dateFormatted}</div>
-        <div class="note-text">${note.text}</div>
-        <button id="${note.id}" class="delete-note-button" aria-label="Delete note">&times;</button>
+        <div class="note-text">${escapeHtml(note.text)}</div>
+        <button id="${
+          note.id
+        }" class="delete-note-button" aria-label="Delete note">&times;</button>
       </div>
       `
     );
@@ -219,3 +221,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const loader = document.querySelector("#loader");
   loader.remove();
 });
+
+/**
+ * Utility functions
+ */
+
+// http://shebang.mintern.net/foolproof-html-escaping-in-javascript/
+const escapeHtml = (str) => {
+  var div = document.createElement("div");
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+};
