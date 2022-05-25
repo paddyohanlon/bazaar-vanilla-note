@@ -28,6 +28,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   const notesTable = rid.table(NOTES_TABLE_NAME, {});
 
   /**
+   * Delete note
+   * @param {string} noteId
+   */
+  const removeNoteFromDOM = (noteId) => {
+    // Do not try to delete the note if it doesn't exists
+    if (document.getElementById(noteId)) return;
+
+    const deleteButton = document.getElementById(noteId);
+    const noteElement = deleteButton.closest(".note");
+    noteElement.remove();
+  };
+
+  /**
    * Add an event listener to delete a note from the database and DOM
    * @param {string} noteId
    */
@@ -43,9 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         rowId: noteId,
       });
 
-      // Remove note from DOM
-      const noteElement = deleteButton.closest(".note");
-      noteElement.remove();
+      removeNoteFromDOM(noteId);
     });
   };
 
@@ -54,6 +65,9 @@ document.addEventListener("DOMContentLoaded", async () => {
    * @param {Note} note
    */
   const insertNoteInDOM = (note) => {
+    // Do not add the note if it already exists
+    if (document.getElementById(note.id)) return;
+
     const notesElement = document.querySelector("#notes");
 
     const dateObj = new Date(note.date);
@@ -134,6 +148,34 @@ document.addEventListener("DOMContentLoaded", async () => {
       for (const note of notes) {
         insertNoteInDOM(note);
       }
+    } catch (error) {
+      console.error("error.message", error.message);
+    }
+
+    /**
+     * Subscribe to notes changes
+     * To know when notes have been added or deleted elsewhere, e.g. on another one of your devices
+     */
+    try {
+      await notesTable.subscribe({}, (changes) => {
+        // Note added
+        if (changes.new_val && changes.old_val === null) {
+          const note = changes.new_val;
+          console.log("Received new note. Add:", note);
+          insertNoteInDOM(changes.new_val);
+        }
+        // Note deleted
+        if (changes.new_val === null && changes.old_val) {
+          const note = changes.old_val;
+          console.log("Received deleted note. Delete:", note);
+          removeNoteFromDOM(note.id);
+        }
+        // If we wanted to handle updating notes, this is how we would listen for updates
+        // Note updated
+        // if (changes.new_val && changes.old_val) {
+        //   ...
+        // }
+      });
     } catch (error) {
       console.error("error.message", error.message);
     }
