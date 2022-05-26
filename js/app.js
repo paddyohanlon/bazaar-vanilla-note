@@ -24,7 +24,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const loggedIn = rid.isLoggedIn();
 
+  const INITIAL_NOTE_SUBMIT_BUTTON_TEXT = "Create note";
   const NOTES_TABLE_NAME = "notes";
+
   const notesTable = rid.table(NOTES_TABLE_NAME, {});
 
   /**
@@ -100,6 +102,12 @@ document.addEventListener("DOMContentLoaded", async () => {
    */
   if (loggedIn) {
     body.classList.replace("logged-out", "logged-in");
+
+    /**
+     * Add create note submit button text
+     */
+    const noteSubmitButton = document.querySelector("#note-submit-button");
+    noteSubmitButton.innerHTML = INITIAL_NOTE_SUBMIT_BUTTON_TEXT;
 
     /**
      * Setup dropdown nav items
@@ -187,6 +195,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     noteForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
+      const noteSubmitButton = document.querySelector("#note-submit-button");
+      noteSubmitButton.innerHTML = "Creating...";
+
       const noteInput = document.querySelector("#note-textarea");
 
       const newNote = {
@@ -209,6 +220,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Clear the input
         noteInput.value = "";
+
+        noteSubmitButton.innerHTML = "Created!";
+
+        setTimeout(() => {
+          noteSubmitButton.innerHTML = INITIAL_NOTE_SUBMIT_BUTTON_TEXT;
+        }, 1000);
       } catch (error) {
         console.error("error.message", error.message);
       }
