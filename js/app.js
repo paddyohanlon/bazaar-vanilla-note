@@ -34,11 +34,11 @@ document.addEventListener("DOMContentLoaded", async () => {
    * @param {string} noteId
    */
   const removeNoteFromDOM = (noteId) => {
-    // Do not try to delete the note if it doesn't exists
-    if (document.getElementById(noteId)) return;
+    const noteElement = document.getElementById(noteId);
 
-    const deleteButton = document.getElementById(noteId);
-    const noteElement = deleteButton.closest(".note");
+    // Do not try to delete the note if it doesn't exist
+    if (!noteElement) return;
+
     noteElement.remove();
   };
 
@@ -47,7 +47,8 @@ document.addEventListener("DOMContentLoaded", async () => {
    * @param {string} noteId
    */
   const addEventListenerToDeleteNote = (noteId) => {
-    const deleteButton = document.getElementById(noteId);
+    const noteElement = document.getElementById(noteId);
+    const deleteButton = noteElement.querySelector(".delete-note-button");
     deleteButton.addEventListener("click", async () => {
       if (!window.confirm("Delete note forever?")) {
         return;
@@ -84,12 +85,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     notesElement.insertAdjacentHTML(
       "afterbegin",
       `
-      <div class="note card">
+      <div id="${note.id}" class="note card">
         <div class="note-date">${dateFormatted}</div>
         <div class="note-text">${escapeHtml(note.text)}</div>
-        <button id="${
-          note.id
-        }" class="delete-note-button" aria-label="Delete note">&times;</button>
+        <button class="delete-note-button" aria-label="Delete note">&times;</button>
       </div>
       `
     );
