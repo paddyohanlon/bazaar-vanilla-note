@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
    * Add an event listener to delete a note from the database and DOM
    * @param {string} noteId
    */
-  const deleteNoteEventListener = (noteId) => {
+  const addEventListenerToDeleteNote = (noteId) => {
     const deleteButton = document.getElementById(noteId);
     deleteButton.addEventListener("click", async () => {
       if (!window.confirm("Delete note forever?")) {
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       `
     );
 
-    deleteNoteEventListener(note.id);
+    addEventListenerToDeleteNote(note.id);
   };
 
   /**
