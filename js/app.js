@@ -253,8 +253,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     params.get("code") && params.get("scope") && params.get("state");
 
   if (loggingIn) {
-    await rid.completeLogIn();
-    window.location.replace(baseUrl);
+    try {
+      await rid.completeLogIn();
+      console.log("completed login");
+      window.location.replace(baseUrl);
+      return;
+    } catch (error) {
+      console.error("completeLogin error: ", error.message);
+    }
   }
 
   /**
