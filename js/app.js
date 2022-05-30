@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   /**
    * Logged out setup
    */
-  if (!loggedIn) {
+  if (!loggedIn && !loggingIn) {
     // Make sure to call `rid.logInUri()` after `rid.completeLogIn()` when logging
     // in because otherwise it will set new PKCE values in local storage and
     // invalidate the login request.
