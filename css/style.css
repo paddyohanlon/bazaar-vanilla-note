@@ -82,9 +82,27 @@ h1 {
 
 .site-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   padding: 0.5em;
+}
+.site-header > * {
+  margin-bottom: 0.5em;
+}
+.site-header > *:last-child {
+  margin-bottom: 0;
+  margin-right: 0;
+}
+
+@media only screen and (min-width: 500px) {
+  .site-header {
+    flex-direction: row;
+  }
+  .site-header > * {
+    margin-bottom: 0;
+    margin-right: 0.5em;
+  }
 }
 
 .nav-list {
@@ -100,6 +118,7 @@ h1 {
 #nav-list-dropdown {
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: var(--border-radius);
+  margin-left: var(--space);
   padding: var(--space);
   position: absolute;
   right: 1em;
@@ -113,6 +132,10 @@ h1 {
 
 .text-label {
   color: var(--primary);
+}
+
+.logged-in .logo-link {
+  align-self: flex-start;
 }
 
 .logo {
