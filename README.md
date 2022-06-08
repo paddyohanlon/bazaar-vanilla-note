@@ -8,7 +8,7 @@ It uses the RethinkID JS SDK.
 
 No building, bundling, compiling or installing necessary. Though you do need to serve the `index.html` file with a local web server, e.g. [http-server](https://www.npmjs.com/package/http-server), in order to have a valid authentication redirect URI when creating your RethinkID app (see RethinkID setup below).
 
-To use `http-server`, follow the appropriate [install instructions](https://www.npmjs.com/package/http-server#user-content-installation). Then run `http-server` on the command line, from this project's root directory (the same directory this README file is in). By default the app will run on `http://localhost:8080`.
+To use `http-server`, follow the appropriate [install instructions](https://www.npmjs.com/package/http-server#user-content-installation). Then run `http-server` on the command line, from this project's root directory (the same directory this README file is in). By default the app will run on `http://localhost:8080`, if that port is available.
 
 ## RethinkID setup
 
