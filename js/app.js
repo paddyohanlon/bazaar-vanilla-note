@@ -7,7 +7,6 @@
  */
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const baseUrl = window.location.origin;
   const body = document.body;
 
   /**
@@ -16,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
    */
   const rid = new RethinkID({
     appId: "ec0887ca-a970-43af-bc75-0aa0164d97e3",
-    logInRedirectUri: baseUrl,
+    logInRedirectUri: location.origin,
     dataAPIConnectErrorCallback: function () {
       this.logOut();
     },
@@ -256,7 +255,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       await rid.completeLogIn();
       console.log("completed login");
-      window.location.replace(baseUrl);
+      location.reload();
       return;
     } catch (error) {
       console.error("completeLogin error: ", error.message);
