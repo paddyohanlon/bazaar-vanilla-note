@@ -24,9 +24,9 @@
       <nav class="site-nav">
         <ul id="logged-out-nav-list" class="nav-list list-reset">
           <li>
-            <a href="" id="authorize-link" class="button"
-              >Sign in or create account</a
-            >
+            <button id="authorize-button" class="button">
+              Sign in or create account
+            </button>
           </li>
         </ul>
         <ul class="nav-list logged-in-nav list-reset">
@@ -93,11 +93,11 @@
       <div id="notes"></div>
 
       <div class="powered-by">
-        Powered by <a href="https://id.rethinkdb.cloud/">RethinkID</a>
+        Powered by <a href="https://cloud.bzr.dev/">Bazaar</a>
       </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/gh/mostlytyped/rethinkid-js-sdk-dist/rethinkid-js-sdk.iife.js"></script>
+    <script src="https://unpkg.com/@bzr/bazaar"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

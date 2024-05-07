@@ -7,27 +7,28 @@
  */
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const baseUrl = window.location.origin;
+  const baseUrl = window.location.href;
   const body = document.body;
 
   /**
-   * Configure the RethinkID SDK
+   * Configure the Bazaar SDK
    * The SDK is imported via a script tag in index.html
    */
-  const rid = new RethinkID({
-    appId: "ec0887ca-a970-43af-bc75-0aa0164d97e3",
-    logInRedirectUri: baseUrl,
-    dataAPIConnectErrorCallback: function () {
-      this.logOut();
+  const bzr = new Bazaar({
+    appId: "test",
+    loginRedirectUri: baseUrl,
+    bazaarUri: "http://localhost:3377",
+    onApiConnectError: async function (bzr) {
+      bzr.logOut();
     },
   });
 
-  const loggedIn = rid.isLoggedIn();
+  const loggedIn = bzr.isLoggedIn();
 
   const INITIAL_NOTE_SUBMIT_BUTTON_TEXT = "Create note";
-  const NOTES_TABLE_NAME = "notes";
+  const NOTES_COLLECTION_NAME = "notes";
 
-  const notesTable = rid.table(NOTES_TABLE_NAME, {});
+  const notesCollection = bzr.collection(NOTES_COLLECTION_NAME);
 
   /**
    * Delete note
@@ -55,9 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       // Delete note from database
-      await notesTable.delete({
-        rowId: noteId,
-      });
+      await notesCollection.deleteOne(noteId);
 
       removeNoteFromDOM(noteId);
     });
@@ -112,9 +111,9 @@ document.addEventListener("DOMContentLoaded", async () => {
      * Setup dropdown nav items
      */
     const signOutButton = document.querySelector("#sign-out-button");
-    signOutButton.addEventListener("click", rid.logOut);
+    signOutButton.addEventListener("click", bzr.logOut);
 
-    const user = rid.userInfo();
+    const user = await bzr.social.getUser();
     if (user) {
       const userId = document.querySelector("#user-id");
       userId.innerText = user.id;
@@ -144,8 +143,8 @@ document.addEventListener("DOMContentLoaded", async () => {
      * Get notes
      */
     try {
-      const response = await notesTable.read();
-      const notes = response.data;
+      const response = await notesCollection.getAll();
+      const notes = response;
 
       // Sort by date DESC, newest at top
       notes.sort((a, b) => {
@@ -164,22 +163,22 @@ document.addEventListener("DOMContentLoaded", async () => {
      * To know when notes have been added or deleted elsewhere, e.g. on another one of your devices
      */
     try {
-      await notesTable.subscribe({}, (changes) => {
+      await notesCollection.subscribeAll({}, ({ newDoc, oldDoc }) => {
         // Note added
-        if (changes.new_val && changes.old_val === null) {
-          const note = changes.new_val;
+        if (newDoc && oldDoc === null) {
+          const note = newDoc;
           console.log("Received new note. Add:", note);
-          insertNoteInDOM(changes.new_val);
+          insertNoteInDOM(newDoc);
         }
         // Note deleted
-        if (changes.new_val === null && changes.old_val) {
-          const note = changes.old_val;
+        if (newDoc === null && oldDoc) {
+          const note = oldDoc;
           console.log("Received deleted note. Delete:", note);
           removeNoteFromDOM(note.id);
         }
         // If we wanted to handle updating notes, this is how we would listen for updates
         // Note updated
-        // if (changes.new_val && changes.old_val) {
+        // if (newDoc && oldDoc) {
         //   ...
         // }
       });
@@ -205,13 +204,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
 
       try {
-        const result = await rid.tableInsert(NOTES_TABLE_NAME, newNote);
+        const id = await notesCollection.insertOne(newNote);
 
         /**
          * @type {Note}
          */
         const createdNote = {
-          id: result.data,
+          id,
           ...newNote,
         };
 
@@ -241,39 +240,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   /**
-   * Logging in
+   * Login button
    */
-  const params = new URLSearchParams(window.location.search);
-
-  // This app has a single page (single route), which is used as the RethinkID log
-  // in redirect_uri.
-  // To know when a log in request is in progress (when an auth code has been received)
-  // check the following URL parameters are present:
-  const loggingIn =
-    params.get("code") && params.get("scope") && params.get("state");
-
-  if (loggingIn) {
-    try {
-      await rid.completeLogIn();
-      console.log("completed login");
-      window.location.replace(baseUrl);
-      return;
-    } catch (error) {
-      console.error("completeLogin error: ", error.message);
-    }
-  }
-
-  /**
-   * Logged out setup
-   */
-  if (!loggedIn && !loggingIn) {
-    // Make sure to call `rid.logInUri()` after `rid.completeLogIn()` when logging
-    // in because otherwise it will set new PKCE values in local storage and
-    // invalidate the login request.
-    const logInUri = await rid.logInUri();
-
-    const authorizeLink = document.querySelector("#authorize-link");
-    authorizeLink.setAttribute("href", logInUri);
+  const authorizeButton = document.querySelector("#authorize-button");
+  if (authorizeButton) {
+    authorizeButton.addEventListener("click", () => {
+      console.log("click!");
+      bzr.login();
+    });
   }
 
   /**
